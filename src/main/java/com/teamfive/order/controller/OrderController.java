@@ -1,5 +1,6 @@
 package com.teamfive.order.controller;
 
+import com.teamfive.order.dto.CustomerDTO;
 import com.teamfive.order.dto.MerchantDTO;
 import com.teamfive.order.dto.OrderDTO;
 import com.teamfive.order.dto.ProductDTO;
@@ -8,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Date;
 
 @RestController
@@ -38,10 +40,16 @@ public class OrderController {
     {
         return null;
     }
+    // TODO (Ajay)
+    private CustomerDTO getCustomer(String customerId)
+    {
+        return null;
+    }
     private void setupOrder(Order order)
     {
         order.setDate(new Date());
         order.setOrderRating(-1);
+        order.setModeOfPayment("CASH_ON_DELIVERY");
         order.setStatus("INITIALIZED");
     }
 

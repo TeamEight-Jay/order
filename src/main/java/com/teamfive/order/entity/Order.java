@@ -1,11 +1,14 @@
 package com.teamfive.order.entity;
 
+import com.teamfive.order.dto.CustomerDTO;
 import com.teamfive.order.dto.MerchantDTO;
 import com.teamfive.order.dto.ProductDTO;
 
+import javax.persistence.Entity;
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
 public class Order {
 
     private String orderId;
@@ -15,7 +18,7 @@ public class Order {
     private String modeOfPayment;
     private String address;
     private Date date;
-    private Customer customerId;
+    private CustomerDTO customerId;
     private int orderRating=-1;
     private String status;
 
@@ -107,11 +110,11 @@ public class Order {
         this.date = date;
     }
 
-    public Customer getCustomerId() {
+    public CustomerDTO getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Customer customerId) {
+    public void setCustomerId(CustomerDTO customerId) {
         this.customerId = customerId;
     }
 
