@@ -1,14 +1,15 @@
 package com.teamfive.order.controller;
 
-import com.teamfive.order.dto.CustomerDTO;
 import com.teamfive.order.dto.MerchantDTO;
 import com.teamfive.order.dto.OrderDTO;
 import com.teamfive.order.dto.ProductDTO;
 import com.teamfive.order.entity.Order;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 
@@ -31,17 +32,16 @@ public class OrderController {
         return null;
     }
     //TODO (Sachin)
-    private ProductDTO getProduct(String productId)
-    {
-        return null;
+    private ProductDTO getProduct(String productId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String fooResourceUrl
+                = "http://localhost:8080/product/get/"+productId;
+        ResponseEntity<ProductDTO> response
+                = restTemplate.getForEntity(fooResourceUrl , ProductDTO.class);
+        return response.getBody();
     }
     // TODO (Dipali)
     private MerchantDTO getMerchant(String merchantId)
-    {
-        return null;
-    }
-    // TODO (Ajay)
-    private CustomerDTO getCustomer(String customerId)
     {
         return null;
     }
@@ -49,7 +49,6 @@ public class OrderController {
     {
         order.setDate(new Date());
         order.setOrderRating(-1);
-        order.setModeOfPayment("CASH_ON_DELIVERY");
         order.setStatus("INITIALIZED");
     }
 
