@@ -1,10 +1,10 @@
 package com.teamfive.order.controller;
 
-import com.teamfive.order.dto.MerchantDTO;
 import com.teamfive.order.dto.OrderDTO;
-import com.teamfive.order.dto.ProductDTO;
 import com.teamfive.order.entity.Order;
+import com.teamfive.order.service.OrderService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,38 +16,35 @@ import java.util.Date;
 @RestController
 public class OrderController {
 
+    @Autowired
+    OrderService orderService;
+
+
     @RequestMapping(value = "/order/add", method = RequestMethod.POST)
-    public OrderDTO addOrder(OrderDTO orderDTO)
+    public void addOrder(OrderDTO orderDTO)
     {
-        ProductDTO productDTO= getProduct(orderDTO.getProductId());
-        MerchantDTO merchantDTO= getMerchant(orderDTO.getMerchantId());
-
         Order order= new Order();
-
         BeanUtils.copyProperties(orderDTO,order);
-
-        order.setProduct(productDTO);
-
         setupOrder(order);
-        return null;
+        orderService.addOrder(order);
     }
     //TODO (Sachin)
-    private ProductDTO getProduct(String productId) {
+    private boolean getProduct(String productId) {
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = "http://localhost:8080/product/get/"+productId;
-        ResponseEntity<ProductDTO> response
-                = restTemplate.getForEntity(fooResourceUrl , ProductDTO.class);
+                = "http://localhost:8080/product/check/"+productId;
+        ResponseEntity<Boolean> response
+                = restTemplate.getForEntity(fooResourceUrl , Boolean.class);
         return response.getBody();
     }
     // TODO (Dipali)
-    private MerchantDTO getMerchant(String merchantId)
+    private boolean getMerchant(String merchantId)
     {
         RestTemplate restTemplate = new RestTemplate();
         String fooResourceUrl
-                = "http://localhost:8080/getMerchant/"+merchantId;
-        ResponseEntity<MerchantDTO> response
-                = restTemplate.getForEntity(fooResourceUrl , MerchantDTO.class);
+                = "http://localhost:8080/checkMerchant/"+merchantId;
+        ResponseEntity<Boolean> response
+                = restTemplate.getForEntity(fooResourceUrl , Boolean.class);
         return response.getBody();
     }
     private void setupOrder(Order order)
