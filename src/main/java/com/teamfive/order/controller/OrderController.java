@@ -43,7 +43,12 @@ public class OrderController {
     // TODO (Dipali)
     private MerchantDTO getMerchant(String merchantId)
     {
-        return null;
+        RestTemplate restTemplate = new RestTemplate();
+        String fooResourceUrl
+                = "http://localhost:8080/getMerchant/"+merchantId;
+        ResponseEntity<MerchantDTO> response
+                = restTemplate.getForEntity(fooResourceUrl , MerchantDTO.class);
+        return response.getBody();
     }
     private void setupOrder(Order order)
     {
