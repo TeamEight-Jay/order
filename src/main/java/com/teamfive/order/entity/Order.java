@@ -12,13 +12,13 @@ import java.util.Objects;
 public class Order {
 
     private String orderId;
-    private ProductDTO productId;
-    private MerchantDTO merchantId;
+    private ProductDTO product;
+    private MerchantDTO merchant;
     private int price;
     private String modeOfPayment;
     private String address;
     private Date date;
-    private CustomerDTO customerId;
+    private CustomerDTO customer;
     private int orderRating=-1;
     private String status;
 
@@ -28,13 +28,13 @@ public class Order {
     public String toString() {
         return "OrderDTO{" +
                 "orderId='" + orderId + '\'' +
-                ", productId='" + productId + '\'' +
-                ", merchantId='" + merchantId + '\'' +
+                ", product='" + product + '\'' +
+                ", merchant='" + merchant + '\'' +
                 ", price=" + price +
                 ", modeOfPayment='" + modeOfPayment + '\'' +
                 ", address=" + address +
                 ", date=" + date +
-                ", customerId=" + customerId +
+                ", customer=" + customer +
                 ", orderRating=" + orderRating +
                 ", status='" + status + '\'' +
                 '}';
@@ -45,13 +45,13 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(orderId, order.orderId);
+        return Objects.equals(this.orderId, order.orderId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(orderId, productId, merchantId, price, modeOfPayment, address, date, customerId, orderRating, status);
+        return Objects.hash(orderId, product, merchant, price, modeOfPayment, address, date, customer, orderRating, status);
     }
 
     public String getOrderId() {
@@ -62,20 +62,20 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public ProductDTO getProductId() {
-        return productId;
+    public ProductDTO getProduct() {
+        return product;
     }
 
-    public void setProductId(ProductDTO productId) {
-        this.productId = productId;
+    public void setProduct(ProductDTO product) {
+        this.product = product;
     }
 
-    public MerchantDTO getMerchantId() {
-        return merchantId;
+    public MerchantDTO getMerchant() {
+        return merchant;
     }
 
-    public void setMerchantId(MerchantDTO merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchant(MerchantDTO merchant) {
+        this.merchant = merchant;
     }
 
     public int getPrice() {
@@ -110,12 +110,12 @@ public class Order {
         this.date = date;
     }
 
-    public CustomerDTO getCustomerId() {
-        return customerId;
+    public CustomerDTO getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(CustomerDTO customerId) {
-        this.customerId = customerId;
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
     }
 
     public int getOrderRating() {

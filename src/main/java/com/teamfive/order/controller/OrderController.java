@@ -26,7 +26,7 @@ public class OrderController {
 
         BeanUtils.copyProperties(orderDTO,order);
 
-        order.setProductId(productDTO);
+        order.setProduct(productDTO);
 
         setupOrder(order);
         return null;
