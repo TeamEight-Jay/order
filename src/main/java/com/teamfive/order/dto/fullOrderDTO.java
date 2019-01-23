@@ -1,20 +1,9 @@
-package com.teamfive.order.entity;
+package com.teamfive.order.dto;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
-import java.util.Objects;
 
-@Entity
-@Table( name = "ORDERSLIP")
-public class Order {
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name="uuid",strategy = "uuid2")
+public class fullOrderDTO {
+
     private String orderId;
     private String productId;
     private String merchantId;
@@ -24,10 +13,9 @@ public class Order {
     private String modeOfPayment;
     private String address;
     private Date date;
-    private int orderRating=-1;
+    private int orderRating;
     private String status;
     private int quantity;
-
 
     public String getOrderId() {
         return orderId;
@@ -127,7 +115,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "fullOrderDTO{" +
                 "orderId='" + orderId + '\'' +
                 ", productId='" + productId + '\'' +
                 ", merchantId='" + merchantId + '\'' +

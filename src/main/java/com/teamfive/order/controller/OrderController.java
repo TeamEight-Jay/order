@@ -1,16 +1,15 @@
 package com.teamfive.order.controller;
 
+import com.teamfive.order.dto.InventoryDTO;
 import com.teamfive.order.dto.OrderDTO;
-import com.teamfive.order.entity.Order;
+import com.teamfive.order.dto.OrderResponseDto;
+import com.teamfive.order.dto.fullOrderDTO;
 import com.teamfive.order.service.OrderService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @RestController
@@ -19,39 +18,72 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
+    private final String INVENTORY_ENDPOINT="http://10.177.7.88:10000/inventory/";
 
-    @RequestMapping(value = "/order/add", method = RequestMethod.POST)
-    public void addOrder(OrderDTO orderDTO)
+
+    @PostMapping(value = "order/new")
+    private OrderResponseDto setupOrder(@RequestBody OrderDTO orderDTO)
     {
-        Order order= new Order();
-        BeanUtils.copyProperties(orderDTO,order);
-        setupOrder(order);
-        orderService.addOrder(order);
+
+        //Check with inventory
+        RestTemplate inventoryAPI=new RestTemplate();
+        InventoryDTO inventoryResponse=inventoryAPI.getForObject(
+                INVENTORY_ENDPOINT+"/get/"+orderDTO.getInventoryId(),
+                InventoryDTO.class
+        );
+
+        if(inventoryResponse==null || inventoryResponse.getProductId()==null || inventoryResponse.getMerchantId()==null ||
+        inventoryResponse.getQuantityLeft()==null || inventoryResponse.getPrice()==null)
+        {
+            OrderResponseDto orderResponseDto=new OrderResponseDto();
+            orderResponseDto.setStatus("ERROR");
+            orderResponseDto.setMessage("MALFORMED ORDER : "+orderDTO.toString());
+            orderResponseDto.setOrder(null);
+            return orderResponseDto;
+        }
+        else
+        {
+            if(inventoryResponse.getQuantityLeft()<orderDTO.getQuantity())
+            {
+                OrderResponseDto orderResponseDto=new OrderResponseDto();
+                orderResponseDto.setStatus("FAILURE");
+                orderResponseDto.setMessage("REQUESTED QUANTITY NOT AVAILABLE, CURRENT QUANTITY : "+inventoryResponse.getQuantityLeft());
+                orderResponseDto.setOrder(null);
+                return orderResponseDto;
+            }
+
+            fullOrderDTO fullOrderDTO=new fullOrderDTO();
+
+            fullOrderDTO.setProductId(inventoryResponse.getProductId());
+            fullOrderDTO.setMerchantId(inventoryResponse.getMerchantId());
+            fullOrderDTO.setInventoryId(orderDTO.getInventoryId());
+            fullOrderDTO.setCustomerId(orderDTO.getCustomerId());
+            fullOrderDTO.setPrice(inventoryResponse.getPrice());
+            fullOrderDTO.setAddress(orderDTO.getAddress());
+            fullOrderDTO.setQuantity(orderDTO.getQuantity());
+            fullOrderDTO.setModeOfPayment("CASH_ON_DELIVERY");
+
+            fullOrderDTO=orderService.initOrder(fullOrderDTO);
+
+            OrderResponseDto orderResponseDto=new OrderResponseDto();
+
+            orderResponseDto.setOrder(fullOrderDTO);
+            orderResponseDto.setStatus("INITIALIZED");
+            orderResponseDto.setMessage("");
+
+
+            return orderResponseDto;
+
+
+        }
+
+
     }
-    //TODO (Sachin)
-    private boolean getProduct(String productId) {
-        RestTemplate restTemplate = new RestTemplate();
-        String fooResourceUrl
-                = "http://localhost:8080/product/check/"+productId;
-        ResponseEntity<Boolean> response
-                = restTemplate.getForEntity(fooResourceUrl , Boolean.class);
-        return response.getBody();
-    }
-    // TODO (Dipali)
-    private boolean getMerchant(String merchantId)
+
+    @GetMapping("/order/customer/get/{customerId}")
+    public ArrayList<fullOrderDTO> getAllOrders(@PathVariable String customerId)
     {
-        RestTemplate restTemplate = new RestTemplate();
-        String fooResourceUrl
-                = "http://localhost:8080/checkMerchant/"+merchantId;
-        ResponseEntity<Boolean> response
-                = restTemplate.getForEntity(fooResourceUrl , Boolean.class);
-        return response.getBody();
-    }
-    private void setupOrder(Order order)
-    {
-        order.setDate(new Date());
-        order.setOrderRating(-1);
-        order.setStatus("INITIALIZED");
+        return orderService.getAllOrders(customerId);
     }
 
 }

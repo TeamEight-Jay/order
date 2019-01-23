@@ -1,24 +1,20 @@
 package com.teamfive.order.dto;
 
-import java.util.Objects;
 
 public class OrderDTO {
 
-    private String orderId;
-    private String productId;
-    private String merchantId;
-    private int price;
-    private String modeOfPayment;
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
+    private String inventoryId;
+    private String customerId;
+    private int quantity;
     private String address;
+
+    public String getInventoryId() {
+        return inventoryId;
+    }
+
+    public void setInventoryId(String inventoryId) {
+        this.inventoryId = inventoryId;
+    }
 
     public String getCustomerId() {
         return customerId;
@@ -28,72 +24,29 @@ public class OrderDTO {
         this.customerId = customerId;
     }
 
-    private String customerId;
-
-    public String getOrderId() {
-        return orderId;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getAddress() {
+        return address;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setAddress(String address) {
+        this.address = address;
     }
-
-    public String getMerchantId() {
-        return merchantId;
-    }
-
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getModeOfPayment() {
-        return modeOfPayment;
-    }
-
-    public void setModeOfPayment(String modeOfPayment) {
-        this.modeOfPayment = modeOfPayment;
-    }
-
-
 
     @Override
     public String toString() {
         return "OrderDTO{" +
-                "orderId='" + orderId + '\'' +
-                ", productId='" + productId + '\'' +
-                ", merchantId='" + merchantId + '\'' +
-                ", price=" + price +
-                ", modeOfPayment='" + modeOfPayment + '\'' +
+                "inventoryId='" + inventoryId + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", quantity=" + quantity +
+                ", address='" + address + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderDTO order = (OrderDTO) o;
-        return Objects.equals(orderId, order.orderId);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(orderId, productId, merchantId, price, modeOfPayment, customerId);
     }
 }
