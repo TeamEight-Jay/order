@@ -63,13 +63,25 @@ public class OrderController {
             fullOrderDTO.setQuantity(orderDTO.getQuantity());
             fullOrderDTO.setModeOfPayment("CASH_ON_DELIVERY");
 
-            fullOrderDTO=orderService.initOrder(fullOrderDTO);
+            String inventoryOrderResponse= inventoryAPI.getForObject(INVENTORY_ENDPOINT+"/placeorder/"
+                    +fullOrderDTO.getInventoryId()+"/"
+                    +fullOrderDTO.getQuantity(),String.class);
 
             OrderResponseDto orderResponseDto=new OrderResponseDto();
 
-            orderResponseDto.setOrder(fullOrderDTO);
-            orderResponseDto.setStatus("INITIALIZED");
-            orderResponseDto.setMessage("");
+            if(inventoryOrderResponse.equals("SUCCESS")) {
+                fullOrderDTO = orderService.initOrder(fullOrderDTO);
+                orderResponseDto.setStatus("INITIALIZED");
+                orderResponseDto.setOrder(fullOrderDTO);
+            }
+            else{
+                orderResponseDto.setStatus("FAILURE");
+            }
+
+
+            orderResponseDto.setMessage(inventoryOrderResponse);
+
+
 
 
             return orderResponseDto;
