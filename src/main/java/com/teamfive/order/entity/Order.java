@@ -24,7 +24,7 @@ public class Order {
     private String modeOfPayment;
     private String address;
     private Date date;
-    private int orderRating=-1;
+    private double orderRating=-1;
     private String status;
     private int quantity;
 
@@ -101,11 +101,11 @@ public class Order {
         this.date = date;
     }
 
-    public int getOrderRating() {
+    public double getOrderRating() {
         return orderRating;
     }
 
-    public void setOrderRating(int orderRating) {
+    public void setOrderRating(double orderRating) {
         this.orderRating = orderRating;
     }
 

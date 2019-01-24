@@ -13,7 +13,7 @@ public class fullOrderDTO {
     private String modeOfPayment;
     private String address;
     private Date date;
-    private int orderRating;
+    private double orderRating;
     private String status;
     private int quantity;
 
@@ -89,7 +89,7 @@ public class fullOrderDTO {
         this.date = date;
     }
 
-    public int getOrderRating() {
+    public double getOrderRating() {
         return orderRating;
     }
 

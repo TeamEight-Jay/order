@@ -10,4 +10,5 @@ public interface OrderService {
     public Order selectOrder(String orderId);
     public fullOrderDTO initOrder(fullOrderDTO orderDTO);
     public ArrayList<fullOrderDTO> getAllOrders(String customerID);
+    public void rateOrder(String orderId,double rating);
 }

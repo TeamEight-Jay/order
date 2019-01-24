@@ -2,10 +2,12 @@ package com.teamfive.order.service;
 
 import com.teamfive.order.dto.OrderDTO;
 import com.teamfive.order.dto.fullOrderDTO;
+import com.teamfive.order.dto.ratingUpdateKafkaMessage;
 import com.teamfive.order.entity.Order;
 import com.teamfive.order.repository.OrderRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +18,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderRepository orderRepository;
-
 
     @Override
     public Order selectOrder(String orderId) {
@@ -53,5 +54,13 @@ public class OrderServiceImpl implements OrderService {
         return fullOrderDTOArrayList;
     }
 
+    @Override
+    public void rateOrder(String orderId,double rating) {
+        Order order = orderRepository.findOne(orderId);
+        if(order.getOrderRating()>=0&&order.getOrderRating()<=5) return;
+        if(rating<0||rating>5) return;
+        order.setOrderRating(rating);
+
+    }
 
 }

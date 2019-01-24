@@ -1,11 +1,10 @@
 package com.teamfive.order.controller;
 
-import com.teamfive.order.dto.InventoryDTO;
-import com.teamfive.order.dto.OrderDTO;
-import com.teamfive.order.dto.OrderResponseDto;
-import com.teamfive.order.dto.fullOrderDTO;
+import com.teamfive.order.dto.*;
+import com.teamfive.order.entity.Order;
 import com.teamfive.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +16,10 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    KafkaTemplate<String,ratingUpdateKafkaMessage> kafkaTemplate;
+
 
     private final String INVENTORY_ENDPOINT="http://10.177.7.88:10000/inventory/";
 
@@ -71,11 +74,12 @@ public class OrderController {
 
             if(inventoryOrderResponse.equals("SUCCESS")) {
                 fullOrderDTO = orderService.initOrder(fullOrderDTO);
-                orderResponseDto.setStatus("INITIALIZED");
+                orderResponseDto.setStatus("SUCCESS");
                 orderResponseDto.setOrder(fullOrderDTO);
             }
             else{
                 orderResponseDto.setStatus("FAILURE");
+                orderResponseDto.setMessage("FAILED TO PLACE ORDER DUE TO INTERNAL ERROR, TRY AGAIN");
             }
 
 
@@ -92,10 +96,29 @@ public class OrderController {
 
     }
 
-    @GetMapping("/order/customer/get/{customerId}")
-    public ArrayList<fullOrderDTO> getAllOrders(@PathVariable String customerId)
+    @GetMapping("/order/customer/get")
+    public ArrayList<fullOrderDTO> getAllOrders(@RequestParam String token)
     {
-        return orderService.getAllOrders(customerId);
+        return orderService.getAllOrders(token);
+    }
+
+    @GetMapping("/order/rating/rate")
+    public void rateOrder(@RequestParam String orderId,@RequestParam double rating)
+    {
+        orderService.rateOrder(orderId,rating);
+
+        Order order=orderService.selectOrder(orderId);
+
+        if(order.getOrderRating()!=rating) return;
+
+        ratingUpdateKafkaMessage ratingUpdateKafkaMessage=new ratingUpdateKafkaMessage();
+
+        ratingUpdateKafkaMessage.setInventoryId(order.getInventoryId());
+        ratingUpdateKafkaMessage.setMerchantId(order.getMerchantId());
+        ratingUpdateKafkaMessage.setProductId(order.getProductId());
+        ratingUpdateKafkaMessage.setRating(rating);
+
+        kafkaTemplate.send("ORDER_RATING",ratingUpdateKafkaMessage);
     }
 
 }
